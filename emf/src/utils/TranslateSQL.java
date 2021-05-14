@@ -22,12 +22,12 @@ public class TranslateSQL {
 		String KEY3 = "GROUP BY";
 		String KEY4 = "SUCH THAT";
 		String KEY5 = "HAVING";
-		String SA = "";
-		int NG = 0;
-		String GV = "";
+		String Select_Att = "";
+		int Num_Group_Variables = 0;
+		String Group_Att = "";
 		String FV = "";
-		String CV = "";
-		String HC = "";
+		String Condition_Vect = "";
+		String Having_Condition = "";
 		String[] temp = {};
 		List<String> Order = new ArrayList<>();
 		List<String> S_Order = new ArrayList<>();
@@ -36,16 +36,17 @@ public class TranslateSQL {
 		Matcher n = null;
 		for(String line:querry) {
 			if(line.contains(key1)||line.contains(KEY1)) {
-				m = Pattern.compile("(select\\s+)(.*)").matcher(line);
+				Pattern p1 = Pattern.compile("(select\\s+)(.*)");
+				m = p1.matcher(line);
 				m.find();
-				SA = m.group(2);
+				Select_Att = m.group(2);
 				temp = m.group(2).replaceAll(" ", "").split(",");
 				for(String i:temp) {
-					Pattern p1 = Pattern.compile("()([A-Za-z0-9]+)([(]*)([A-Za-z0-9]*)([.]*)([a-zA-Z0-9|*]*)([)]*)()");
-					n = p1.matcher(i);
+					Pattern p2 = Pattern.compile("()([A-Za-z0-9]+)([(]*)([A-Za-z0-9]*)([.]*)([a-zA-Z0-9|*]*)([)]*)()");
+					n = p2.matcher(i);
 					if(n.find()) {
-						Pattern p2 = Pattern.compile("()([A-Za-z0-9]+)([(])([A-Za-z0-9|*]+)([.]*)([a-zA-Z0-9|*]*)([)])()");
-						n = p2.matcher(i);
+						Pattern p3 = Pattern.compile("()([A-Za-z0-9]+)([(])([A-Za-z0-9|*]+)([.]*)([a-zA-Z0-9|*]*)([)])()");
+						n = p3.matcher(i);
 						if(n.find()) {
 							if(n.group(5).equals("."))
 								S_Order.add(n.group(4)+"_"+n.group(2)+"_"+n.group(6));
@@ -53,8 +54,8 @@ public class TranslateSQL {
 								S_Order.add("O_"+n.group(2)+"_"+n.group(4));
 						}
 						else {
-							Pattern p3 = Pattern.compile("()([A-Za-z0-9]+)([.])([a-zA-Z0-9|*]+)()");
-							n = p3.matcher(i);
+							Pattern p4 = Pattern.compile("()([A-Za-z0-9]+)([.])([a-zA-Z0-9|*]+)()");
+							n = p4.matcher(i);
 							if(n.find()) {
 								S_Order.add(n.group(2)+"_"+n.group(4));
 							}
@@ -68,32 +69,32 @@ public class TranslateSQL {
 				}
 			}
 			else if(line.contains(key3)||line.contains(KEY3)) {
-				Pattern p4 = Pattern.compile("(group by\\s+)(.*)([;])(.*)");
-				m = p4.matcher(line);
+				Pattern p5 = Pattern.compile("(group by\\s+)(.*)([;])(.*)");
+				m = p5.matcher(line);
 				m.find();
-				GV = m.group(2);
-				NG = m.group(4).split(",").length;
+				Group_Att = m.group(2);
+				Num_Group_Variables = m.group(4).split(",").length;
 				temp = m.group(4).replaceAll(" ", "").split(",");
 				for(String i:temp) {
 					Order.add(i);
 				}
 			}
 			else if(line.contains(key4)||line.contains(KEY4)) {
-				Pattern p5 = Pattern.compile("(such that\\s+)(.*)");
-				m = p5.matcher(line);
-				m.find();
-				CV = m.group(2);
-			}
-			else if(line.contains(key5)||line.contains(KEY5)) {
-				Pattern p6 = Pattern.compile("(having\\s+)(.*)");
+				Pattern p6 = Pattern.compile("(such that\\s+)(.*)");
 				m = p6.matcher(line);
 				m.find();
-				HC = m.group(2);
+				Condition_Vect = m.group(2);
+			}
+			else if(line.contains(key5)||line.contains(KEY5)) {
+				Pattern p7 = Pattern.compile("(having\\s+)(.*)");
+				m = p7.matcher(line);
+				m.find();
+				Having_Condition = m.group(2);
 			}
 		}
 		//find all the grouping variable aggregate in such as
-		Pattern p7 = Pattern.compile("([^A-Za-z0-9]*)([A-Za-z0-9]+[(][A-Za-z0-9]*[.]*[A-Za-z0-9]+[)])([^A-Za-z0-9]*)");
-		m = p7.matcher(CV);
+		Pattern p8 = Pattern.compile("([^A-Za-z0-9]*)([A-Za-z0-9]+[(][A-Za-z0-9]*[.]*[A-Za-z0-9]+[)])([^A-Za-z0-9]*)");
+		m = p8.matcher(Condition_Vect);
 		while(m.find()) {
 			if(m.hitEnd()) {
 				if(!FV.contains(m.group(2)))
@@ -105,7 +106,7 @@ public class TranslateSQL {
 			}
 		}
 		//find all the grouping variable aggregate in having
-		m = p7.matcher(HC);
+		m = p8.matcher(Having_Condition);
 		while(m.find()) {
 			if(m.hitEnd()) {
 				if(!FV.contains(m.group(2)))
@@ -117,8 +118,8 @@ public class TranslateSQL {
 			}
 		}
 		//find all the grouping variable aggregate in select
-		Pattern p8 = Pattern.compile("([^A-Za-z0-9]*)([A-Za-z0-9]+[(][A-Za-z0-9]*[.]*[A-Za-z0-9|*]+[)])([^A-Za-z0-9]*)");
-		m = p8.matcher(SA);
+		Pattern p9 = Pattern.compile("([^A-Za-z0-9]*)([A-Za-z0-9]+[(][A-Za-z0-9]*[.]*[A-Za-z0-9|*]+[)])([^A-Za-z0-9]*)");
+		m = p9.matcher(Select_Att);
 		while(m.find()) {
 			if(m.hitEnd()) {
 				if(!FV.contains(m.group(2)))
@@ -129,24 +130,24 @@ public class TranslateSQL {
 					FV = FV+m.group(2)+",";
 			}
 		}
-		CV = CV.replaceAll("'", "\"");
-		HC = HC.replaceAll("'", "\"");
+		Condition_Vect = Condition_Vect.replaceAll("'", "\"");
+		Having_Condition = Having_Condition.replaceAll("'", "\"");
 		File file = new File("emf/Example 1.txt");
 		try {
 			file.createNewFile();
 			FileWriter writer = new FileWriter(file); 
 			writer.write("// SELECT ATTRIBUTE(S):\n");
-			writer.write(SA+"\n");
+			writer.write(Select_Att+"\n");
 			writer.write("// NUMBER OF GROUPING VARIABLES(n):\n");
-			writer.write(NG+"\n");
+			writer.write(Num_Group_Variables+"\n");
 			writer.write("// GROUPING ATTRIBUTES(V):\n");
-			writer.write(GV+"\n");
+			writer.write(Group_Att+"\n");
 			writer.write("// F-VECT([F]):\n");
 			writer.write(FV+"\n");
 			writer.write("// SELECT CONDITION-VECT([Sigma]):\n");
-			writer.write(CV+"\n");
+			writer.write(Condition_Vect+"\n");
 			writer.write("// HAVING CONDITION(G):\n");
-			writer.write(HC+"\n");
+			writer.write(Having_Condition+"\n");
 			writer.flush();
 			writer.close();
 		} catch (IOException e) {
@@ -157,5 +158,6 @@ public class TranslateSQL {
 		All_Order.add(Order);
 		return All_Order;
 	}
+}
 }
 
