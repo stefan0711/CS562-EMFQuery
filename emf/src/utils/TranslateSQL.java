@@ -151,7 +151,7 @@ public class TranslateSQL {
 			writer.write(Num_Group_Variables+"\n");
 			writer.write("// GROUPING ATTRIBUTES(V):\n");
 			writer.write(Group_Att+"\n");
-			writer.write("// List of aggregate functions([F]):\n");
+			writer.write("// F-VECT([F]):\n");
 			writer.write(Aggregate_function+"\n");
 			writer.write("// SELECT CONDITION-VECT([Sigma]):\n");
 			writer.write(Condition_Vect+"\n");
