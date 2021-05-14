@@ -1,0 +1,10 @@
+=============================MF/EMF Query=============================
+select cust,prod,month,max(x.quant)
+from sales
+group by cust,prod,month;x
+such that x.cust=cust and x.prod=prod
+
+===========================PostgreSQL Query===========================
+select cust,prod,month,max(quant)
+from sales
+group by cust,prod,month

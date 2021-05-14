@@ -1,0 +1,21 @@
+﻿=============================MF/EMF Query=============================
+select cust, prod, avg(x.quant), avg(y.quant)
+from sales
+group by cust, prod; x, y
+such that x.cust = cust and x.prod = prod, y.cust <> cust and y.prod = prod
+ 
+===========================PostgreSQL Query===========================
+WITH
+"B1" AS
+( SELECT cust, prod, avg(quant)
+  FROM sales
+  GROUP BY cust, prod ),
+"B2" AS
+( SELECT x.cust, x.prod, avg(y.quant)
+  FROM sales x, sales y
+  WHERE x.prod = y.prod AND x.cust <> y.cust
+  GROUP BY x.cust, x.prod )
+
+SELECT x.cust, x.prod, x.avg, y.avg
+FROM "B1" x FULL OUTER JOIN "B2" y USING("cust", "prod")
+ORDER BY x.cust, x.prod

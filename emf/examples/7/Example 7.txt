@@ -1,0 +1,23 @@
+=============================MF/EMF Query=============================
+select  prod, month, avg(X.quant),avg(Y.quant)
+from Sales
+group by prod, month; X , Y
+such that  X.prod=prod and X.month<month,Y.prod=prod and Y.month>month
+===========================PostgreSQL Query===========================
+
+with B1(product,month,avgx) as(
+	select x.prod, x.month, avg(y.quant)
+	from Sales x, Sales y
+	where x.prod=y.prod and x.month>y.month
+	group by x.prod, x.month
+),
+B2(product,month,avgy) as(
+	select x.prod, x.month, avg(y.quant)
+	from Sales x, Sales y
+	where  x.prod=y.prod and x.month<y.month
+	group by x.prod, x.month
+)
+select B1.product, B1.month, avgx, avgy
+from B1, B2
+where  B1.product=B2.product and B1.month=B2.month
+order by B1.product
