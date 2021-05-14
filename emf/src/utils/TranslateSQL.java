@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.regex.*;
 import java.io.*;
 
-
 public class TranslateSQL {
 	/**
 	 * 
@@ -42,10 +41,11 @@ public class TranslateSQL {
 				SA = m.group(2);
 				temp = m.group(2).replaceAll(" ", "").split(",");
 				for(String i:temp) {
-					n = Pattern.compile("()([A-Za-z0-9]+)([(]*)([A-Za-z0-9]*)([.]*)([a-zA-Z0-9|*]*)([)]*)()").matcher(i);
+					Pattern p1 = Pattern.compile("()([A-Za-z0-9]+)([(]*)([A-Za-z0-9]*)([.]*)([a-zA-Z0-9|*]*)([)]*)()");
+					n = p1.matcher(i);
 					if(n.find()) {
-						//if pattern match avg(x.quant)
-						n = Pattern.compile("()([A-Za-z0-9]+)([(])([A-Za-z0-9|*]+)([.]*)([a-zA-Z0-9|*]*)([)])()").matcher(i);
+						Pattern p2 = Pattern.compile("()([A-Za-z0-9]+)([(])([A-Za-z0-9|*]+)([.]*)([a-zA-Z0-9|*]*)([)])()");
+						n = p2.matcher(i);
 						if(n.find()) {
 							if(n.group(5).equals("."))
 								S_Order.add(n.group(4)+"_"+n.group(2)+"_"+n.group(6));
@@ -53,7 +53,8 @@ public class TranslateSQL {
 								S_Order.add("O_"+n.group(2)+"_"+n.group(4));
 						}
 						else {
-							n = Pattern.compile("()([A-Za-z0-9]+)([.])([a-zA-Z0-9|*]+)()").matcher(i);
+							Pattern p3 = Pattern.compile("()([A-Za-z0-9]+)([.])([a-zA-Z0-9|*]+)()");
+							n = p3.matcher(i);
 							if(n.find()) {
 								S_Order.add(n.group(2)+"_"+n.group(4));
 							}
@@ -67,7 +68,8 @@ public class TranslateSQL {
 				}
 			}
 			else if(line.contains(key3)||line.contains(KEY3)) {
-				m = Pattern.compile("(group by\\s+)(.*)([;])(.*)").matcher(line);
+				Pattern p4 = Pattern.compile("(group by\\s+)(.*)([;])(.*)");
+				m = p4.matcher(line);
 				m.find();
 				GV = m.group(2);
 				NG = m.group(4).split(",").length;
@@ -77,18 +79,21 @@ public class TranslateSQL {
 				}
 			}
 			else if(line.contains(key4)||line.contains(KEY4)) {
-				m = Pattern.compile("(such that\\s+)(.*)").matcher(line);
+				Pattern p5 = Pattern.compile("(such that\\s+)(.*)");
+				m = p5.matcher(line);
 				m.find();
 				CV = m.group(2);
 			}
 			else if(line.contains(key5)||line.contains(KEY5)) {
-				m = Pattern.compile("(having\\s+)(.*)").matcher(line);
+				Pattern p6 = Pattern.compile("(having\\s+)(.*)");
+				m = p6.matcher(line);
 				m.find();
 				HC = m.group(2);
 			}
 		}
 		//find all the grouping variable aggregate in such as
-		m = Pattern.compile("([^A-Za-z0-9]*)([A-Za-z0-9]+[(][A-Za-z0-9]*[.]*[A-Za-z0-9]+[)])([^A-Za-z0-9]*)").matcher(CV);
+		Pattern p7 = Pattern.compile("([^A-Za-z0-9]*)([A-Za-z0-9]+[(][A-Za-z0-9]*[.]*[A-Za-z0-9]+[)])([^A-Za-z0-9]*)");
+		m = p7.matcher(CV);
 		while(m.find()) {
 			if(m.hitEnd()) {
 				if(!FV.contains(m.group(2)))
@@ -100,7 +105,7 @@ public class TranslateSQL {
 			}
 		}
 		//find all the grouping variable aggregate in having
-		m = Pattern.compile("([^A-Za-z0-9]*)([A-Za-z0-9]+[(][A-Za-z0-9]*[.]*[A-Za-z0-9]+[)])([^A-Za-z0-9]*)").matcher(HC);
+		m = p7.matcher(HC);
 		while(m.find()) {
 			if(m.hitEnd()) {
 				if(!FV.contains(m.group(2)))
@@ -112,7 +117,8 @@ public class TranslateSQL {
 			}
 		}
 		//find all the grouping variable aggregate in select
-		m = Pattern.compile("([^A-Za-z0-9]*)([A-Za-z0-9]+[(][A-Za-z0-9]*[.]*[A-Za-z0-9|*]+[)])([^A-Za-z0-9]*)").matcher(SA);
+		Pattern p8 = Pattern.compile("([^A-Za-z0-9]*)([A-Za-z0-9]+[(][A-Za-z0-9]*[.]*[A-Za-z0-9|*]+[)])([^A-Za-z0-9]*)");
+		m = p8.matcher(SA);
 		while(m.find()) {
 			if(m.hitEnd()) {
 				if(!FV.contains(m.group(2)))
