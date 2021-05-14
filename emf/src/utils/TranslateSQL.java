@@ -13,6 +13,16 @@ public class TranslateSQL {
 	 */
 	public static List<List<String>> translate(List<String> querry) {
 		Matcher m = null;
+		String key1 = "select";
+		String key2 = "from";
+		String key3 = "group by";
+		String key4 = "such that";
+		String key5 = "having";
+		String KEY1 = "SELECT";
+		String KEY2 = "FROM";
+		String KEY3 = "GROUP BY";
+		String KEY4 = "SUCH THAT";
+		String KEY5 = "HAVING";
 		String SA = "";
 		int NG = 0;
 		String GV = "";
@@ -26,7 +36,7 @@ public class TranslateSQL {
 		Order.add("O");
 		Matcher n = null;
 		for(String line:querry) {
-			if(line.toLowerCase().contains("select")) {
+			if(line.contains(key1)||line.contains(KEY1)) {
 				m = Pattern.compile("(select\\s+)(.*)").matcher(line);
 				m.find();
 				SA = m.group(2);
@@ -56,7 +66,7 @@ public class TranslateSQL {
 
 				}
 			}
-			else if(line.toLowerCase().contains("group by")) {
+			else if(line.contains(key3)||line.contains(KEY3)) {
 				m = Pattern.compile("(group by\\s+)(.*)([;])(.*)").matcher(line);
 				m.find();
 				GV = m.group(2);
@@ -66,12 +76,12 @@ public class TranslateSQL {
 					Order.add(i);
 				}
 			}
-			else if(line.toLowerCase().contains("such that")) {
+			else if(line.contains(key4)||line.contains(KEY4)) {
 				m = Pattern.compile("(such that\\s+)(.*)").matcher(line);
 				m.find();
 				CV = m.group(2);
 			}
-			else if(line.toLowerCase().contains("having")) {
+			else if(line.contains(key5)||line.contains(KEY5)) {
 				m = Pattern.compile("(having\\s+)(.*)").matcher(line);
 				m.find();
 				HC = m.group(2);
@@ -142,3 +152,4 @@ public class TranslateSQL {
 		return All_Order;
 	}
 }
+
