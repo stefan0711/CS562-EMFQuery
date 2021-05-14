@@ -15,12 +15,13 @@ public class TranslateEmf {
 		String variableName = "";
 		String groupByAttri = "";
 		Matcher m = null;
-		for(int i=0; i<attributes.length;i++) {
+		for(int i=0; i<attributes.length; i++) {
 			attributes[i] = attributes[i].replaceAll(" ", "");
 			//if the attribute is a aggregate function
 			if(attributes[i].contains("(")) {
 				//matching pattern like avg(x.quant) or avg(quant)
-				m = Pattern.compile("([a-zA-Z]+)([(])([a-zA-Z0-9]+)([.]*)([a-zA-Z0-9|*]*)([)])").matcher(attributes[i]);
+				Pattern p1 = Pattern.compile("([a-zA-Z]+)([(])([a-zA-Z0-9]+)([.]*)([a-zA-Z0-9|*]*)([)])");
+				m = p1.matcher(attributes[i]);
 				m.find();
 				temp = m.group(1) + "_";
 				if(attributes[i].contains(".")) {
@@ -46,7 +47,8 @@ public class TranslateEmf {
 				//if the attribute is a data of grouping variable like x.quant
 				if(attributes[i].contains(".")) {
 					//matching x.quant
-					m = Pattern.compile("([a-zA-Z0-9]+)([.])([a-zA-Z0-9|*]+)").matcher(attributes[i]);
+					Pattern p2 = Pattern.compile("([a-zA-Z0-9]+)([.])([a-zA-Z0-9|*]+)");
+					m = p2.matcher(attributes[i]);
 					m.find();
 					variableName = m.group(1);
 					temp = m.group(3);
@@ -122,7 +124,8 @@ public class TranslateEmf {
 			for(int j = 0; j<subJudge.length; j++) {
 				//seperate the condition by operation
 				sub = subJudge[j].split("==|>=|<=|!=|>|<");
-				m = Pattern.compile(".*([=><!][=]|[<>]).*").matcher(subJudge[j]);
+				Pattern p3 = Pattern.compile(".*([=><!][=]|[<>]).*");
+				m = p3.matcher(subJudge[j]);
 				m.find();
 				oper = m.group(1);
 				left = sub[0];
@@ -132,28 +135,33 @@ public class TranslateEmf {
 				right_t = "";
 				//further separate left and right part
 				//find all the operation in left part
-				m = Pattern.compile("([-+*/])").matcher(left);
+				Pattern p4 = Pattern.compile("([-+*/])");
+				m = p4.matcher(left);
 				while(m.find())
 					left_logic.add(m.group(1));
 				//find all the operation in right part
-				m = Pattern.compile("([-+*/])").matcher(right);
+				m = p4.matcher(right);
 				while(m.find())
 					right_logic.add(m.group(1));
 				//find the number or things like x.quant or avg(quant) or avg(x.quant) in the left part, change avg(x.quant) into x_avg_quant
-				m = Pattern.compile("([-+*/]*)([^-+*/]+)([-+*/]*)").matcher(left);
+				Pattern p5 = Pattern.compile("([-+*/]*)([^-+*/]+)([-+*/]*)");
+				m = p5.matcher(left);
 				while(m.find()) {
 					temp = m.group(2);
 					//if pattern match x.quant or avg(x.quant)
-					n = Pattern.compile("()([A-Za-z0-9]+)([(]*)([A-Za-z0-9]*)([.])([a-zA-Z0-9|*]*)([)]*)()").matcher(temp);
+					Pattern p6 = Pattern.compile("()([A-Za-z0-9]+)([(]*)([A-Za-z0-9]*)([.])([a-zA-Z0-9|*]*)([)]*)()");
+					n = p6.matcher(temp);
 					if(n.find()) {
 						//if pattern match avg(x.quant)
-						n = Pattern.compile("()([A-Za-z0-9]+)([(])([A-Za-z0-9]+)([.])([a-zA-Z0-9|*]+)([)])()").matcher(temp);
+						Pattern p7 = Pattern.compile("()([A-Za-z0-9]+)([(])([A-Za-z0-9]+)([.])([a-zA-Z0-9|*]+)([)])()");
+						n = p7.matcher(temp);
 						if(n.find()) {
 							temp = n.group(4) + "_" + n.group(2) + "_" + n.group(6);
 							groupingVariable = n.group(4);
 						}
 						else {
-							n = Pattern.compile("()([A-Za-z0-9]+)([.])([a-zA-Z0-9|*]+)()").matcher(temp);
+							Pattern p8 = Pattern.compile("()([A-Za-z0-9]+)([.])([a-zA-Z0-9|*]+)()");
+							n = p8.matcher(temp);
 							if(n.find()) {
 								temp = n.group(2) + "_" + n.group(4);
 								groupingVariable = n.group(2);
@@ -162,7 +170,8 @@ public class TranslateEmf {
 						}
 					}
 					//if pattern match avg(quant)
-					n = Pattern.compile("()([A-Za-z0-9]+)([(])([a-zA-Z0-9|*]+)([)])()").matcher(temp);
+					Patten p9 = Pattern.compile("()([A-Za-z0-9]+)([(])([a-zA-Z0-9|*]+)([)])()");
+					n = p9.matcher(temp);
 					if(n.find()) {
 						temp = "O_" + n.group(2) + "_" + n.group(4);
 						groupingVariable = "O";
@@ -174,22 +183,26 @@ public class TranslateEmf {
 				}
 				//do the same for the right part
 				left = left_t;
-				m = Pattern.compile("([-+*/]*)([^-+*/]+)([-+*/]*)").matcher(right);
+				m = p5.matcher(right);
 				while(m.find()) {
 					temp = m.group(2);
-					n = Pattern.compile("()([A-Za-z0-9]+)([(]*)([A-Za-z0-9]*)([.])([a-zA-Z0-9|*]*)([)]*)()").matcher(temp);
+					Pattern p6 = Pattern.compile("()([A-Za-z0-9]+)([(]*)([A-Za-z0-9]*)([.])([a-zA-Z0-9|*]*)([)]*)()");
+					n = p6.matcher(temp);
 					if(n.find()) {
-						n = Pattern.compile("()([A-Za-z0-9]+)([(])([A-Za-z0-9]+)([.])([a-zA-Z0-9|*]+)([)])()").matcher(temp);
+						Pattern p7 = Pattern.compile("()([A-Za-z0-9]+)([(])([A-Za-z0-9]+)([.])([a-zA-Z0-9|*]+)([)])()");
+						n = p7.matcher(temp);
 						if(n.find()) {
 							temp = n.group(4) + "_" + n.group(2) + "_" + n.group(6);
 						}
 						else {
-							n = Pattern.compile("()([A-Za-z0-9]+)([.])([a-zA-Z0-9|*]+)()").matcher(temp);
+							Pattern p8 = Pattern.compile("()([A-Za-z0-9]+)([.])([a-zA-Z0-9|*]+)()");
+							n = p8.matcher(temp);
 							if(n.find())
 								temp = n.group(2) + "_" + n.group(4);
 						}
 					}
-					n = Pattern.compile("()([A-Za-z0-9]+)([(])([a-zA-Z0-9|*]+)([)])()").matcher(temp);
+					Patten p9 = Pattern.compile("()([A-Za-z0-9]+)([(])([a-zA-Z0-9|*]+)([)])()");
+					n = p9.matcher(temp);
 					if(n.find()) {
 						temp = "O_" + n.group(2) + "_" + n.group(4);
 					}
@@ -237,7 +250,7 @@ public class TranslateEmf {
 		String temp = "";
 		Queue<String> left_logic = new LinkedList<>();
 		Queue<String> right_logic = new LinkedList<>();
-		Pattern pattern = Pattern.compile(".*([=><!][=]|[<>]).*");
+		Pattern p3 = Pattern.compile(".*([=><!][=]|[<>]).*");
 		Matcher m = null;
 		Matcher n = null;
 		for(int i=0; i<Conditions.length; i++) {
@@ -253,7 +266,7 @@ public class TranslateEmf {
 			for(int j=0; j<subJudge.length; j++) {
 				//seperate the condition by operation
 				sub = subJudge[j].split("==|>=|<=|!=|>|<");
-				m = pattern.matcher(subJudge[j]);
+				m = p3.matcher(subJudge[j]);
 				m.find();
 				oper = m.group(1);
 				left = sub[0];
@@ -263,28 +276,34 @@ public class TranslateEmf {
 				
 				//further separate left and right part
 				//find all the operation in left part
-				m = Pattern.compile("([-+*/])").matcher(left);
+				Pattern p4 = Pattern.compile("([-+*/])");
+				m = p4.matcher(left);
 				while(m.find())
 					left_logic.add(m.group(1));
-				m = Pattern.compile("([-+*/])").matcher(right);
+				m = p4.matcher(right);
 				while(m.find())
 					right_logic.add(m.group(1));
-				m = Pattern.compile("([-+*/]*)([^-+*/]+)([-+*/]*)").matcher(left);
+				Pattern p5 = Pattern.compile("([-+*/]*)([^-+*/]+)([-+*/]*)");
+				m = p5.matcher(left);
 				while(m.find()) {
 					temp = m.group(2);
-					n = Pattern.compile("()([A-Za-z0-9]+)([(]*)([A-Za-z0-9]*)([.])([a-zA-Z0-9|*]*)([)]*)()").matcher(temp);
+					Pattern p6 = Pattern.compile("()([A-Za-z0-9]+)([(]*)([A-Za-z0-9]*)([.])([a-zA-Z0-9|*]*)([)]*)()");
+					n = p6.matcher(temp);
 					if(n.find()) {
-						n = Pattern.compile("()([A-Za-z0-9]+)([(])([A-Za-z0-9]+)([.])([a-zA-Z0-9|*]+)([)])()").matcher(temp);
+						Pattern p7 = Pattern.compile("()([A-Za-z0-9]+)([(])([A-Za-z0-9]+)([.])([a-zA-Z0-9|*]+)([)])()");
+						n = p7.matcher(temp);
 						if(n.find()) {
 							temp = n.group(4) + "_" + n.group(2) + "_" + n.group(6);
 						}
 						else {
-							n = Pattern.compile("()([A-Za-z0-9]+)([.])([a-zA-Z0-9|*]+)()").matcher(temp);
+							Pattern p8 = Pattern.compile("()([A-Za-z0-9]+)([.])([a-zA-Z0-9|*]+)()");
+							n = p8.matcher(temp);
 							if(n.find())
 								temp = n.group(2) + "_" + n.group(4);
 						}
 					}
-					n = Pattern.compile("()([A-Za-z0-9]+)([(])([a-zA-Z0-9]+)([)])()").matcher(temp);
+					Patten p10 = Pattern.compile("()([A-Za-z0-9]+)([(])([A-Za-z0-9]+)([)])()")
+					n = p10.matcher(temp);
 					if(n.find())
 						temp = "O_" + n.group(2) + "_" + n.group(4);
 					left_t = left_t+temp;
@@ -292,23 +311,27 @@ public class TranslateEmf {
 						left_t = left_t+left_logic.poll();
 				}
 				left = left_t;
-				m = Pattern.compile("([-+*/]*)([^-+*/]+)([-+*/]*)").matcher(right);
+				m = p5.matcher(right);
 				//find the number or things like x.quant or avg(quant) or avg(x.quant) in the left part, change avg(x.quant) into x_avg_quant
 				while(m.find()) {
 					temp = m.group(2);
-					n = Pattern.compile("()([A-Za-z0-9]+)([(]*)([A-Za-z0-9]*)([.])([a-zA-Z0-9|*]*)([)]*)()").matcher(temp);
+					Pattern p6 = Pattern.compile("()([A-Za-z0-9]+)([(]*)([A-Za-z0-9]*)([.])([a-zA-Z0-9|*]*)([)]*)()");
+					n = p6.matcher(temp);
 					if(n.find()) {
-						n = Pattern.compile("()([A-Za-z0-9]+)([(])([A-Za-z0-9]+)([.])([a-zA-Z0-9|*]+)([)])()").matcher(temp);
+						Pattern p7 = Pattern.compile("()([A-Za-z0-9]+)([(])([A-Za-z0-9]+)([.])([a-zA-Z0-9|*]+)([)])()");
+						n = p7.matcher(temp);
 						if(n.find()) {
 							temp = n.group(4) + "_" + n.group(2) + "_" + n.group(6);
 						}
 						else {
-							n = Pattern.compile("()([A-Za-z0-9]+)([.])([a-zA-Z0-9|*]+)()").matcher(temp);
+							Pattern p8 = Pattern.compile("()([A-Za-z0-9]+)([.])([a-zA-Z0-9|*]+)()");
+							n = p8.matcher(temp);
 							if(n.find())
 								temp = n.group(2) + "_" + n.group(4);
 						}
 					}
-					n = Pattern.compile("()([A-Za-z0-9]+)([(])([A-Za-z0-9]+)([)])()").matcher(temp);
+					Pattern p10 = Pattern.compile("()([A-Za-z0-9]+)([(])([A-Za-z0-9]+)([)])()");
+					n = p10.matcher(temp);
 					if(n.find())
 						temp = "O_" + n.group(2) + "_" + n.group(4);
 					right_t = right_t+temp;
