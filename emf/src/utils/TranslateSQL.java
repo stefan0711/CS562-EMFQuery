@@ -11,7 +11,7 @@ public class TranslateSQL {
 	 * @implNote it is designed to translate SQL into EMF form
 	 */
 	public static List<List<String>> translate(List<String> querry) {
-		Matcher m = null;
+		Matcher m1 = null;
 		String key1 = "select";
 		String key2 = "from";
 		String key3 = "group by";
@@ -25,7 +25,7 @@ public class TranslateSQL {
 		String Select_Att = "";
 		int Num_Group_Variables = 0;
 		String Group_Att = "";
-		String FV = "";
+		String Aggregate_function = "";
 		String Condition_Vect = "";
 		String Having_Condition = "";
 		String[] temp = {};
@@ -33,31 +33,34 @@ public class TranslateSQL {
 		List<String> S_Order = new ArrayList<>();
 		List<List<String>> All_Order = new ArrayList<>();
 		Order.add("O");
-		Matcher n = null;
+		Matcher m1 = null;
+		Matcher m2 = null;
 		for(String line:querry) {
 			if(line.contains(key1)||line.contains(KEY1)) {
 				Pattern p1 = Pattern.compile("(select\\s+)(.*)");
-				m = p1.matcher(line);
-				m.find();
-				Select_Att = m.group(2);
-				temp = m.group(2).replaceAll(" ", "").split(",");
+				m1 = p1.matcher(line);
+				m1.find();
+				Select_Att = m1.group(2);
+				temp = m1.group(2).replaceAll(" ", "").split(",");
 				for(String i:temp) {
 					Pattern p2 = Pattern.compile("()([A-Za-z0-9]+)([(]*)([A-Za-z0-9]*)([.]*)([a-zA-Z0-9|*]*)([)]*)()");
-					n = p2.matcher(i);
-					if(n.find()) {
+					m2 = p2.matcher(i);
+					if(m2.find()) {
 						Pattern p3 = Pattern.compile("()([A-Za-z0-9]+)([(])([A-Za-z0-9|*]+)([.]*)([a-zA-Z0-9|*]*)([)])()");
-						n = p3.matcher(i);
-						if(n.find()) {
-							if(n.group(5).equals("."))
-								S_Order.add(n.group(4)+"_"+n.group(2)+"_"+n.group(6));
-							else
-								S_Order.add("O_"+n.group(2)+"_"+n.group(4));
+						m2 = p3.matcher(i);
+						if(m2.find()) {
+							if(m2.group(5).equals(".")) {
+								S_Order.add(m2.group(4) + "_" + m2.group(2) + "_" + m2.group(6));
+							}
+							else {
+								S_Order.add("O_" + m2.group(2) + "_" + m2.group(4));
+							}
 						}
 						else {
 							Pattern p4 = Pattern.compile("()([A-Za-z0-9]+)([.])([a-zA-Z0-9|*]+)()");
-							n = p4.matcher(i);
-							if(n.find()) {
-								S_Order.add(n.group(2)+"_"+n.group(4));
+							m2 = p4.matcher(i);
+							if(m2.find()) {
+								S_Order.add(m2.group(2)+"_"+m2.group(4));
 							}
 							else {
 								S_Order.add(i);
@@ -70,64 +73,70 @@ public class TranslateSQL {
 			}
 			else if(line.contains(key3)||line.contains(KEY3)) {
 				Pattern p5 = Pattern.compile("(group by\\s+)(.*)([;])(.*)");
-				m = p5.matcher(line);
-				m.find();
-				Group_Att = m.group(2);
-				Num_Group_Variables = m.group(4).split(",").length;
-				temp = m.group(4).replaceAll(" ", "").split(",");
+				m1 = p5.matcher(line);
+				m1.find();
+				Group_Att = m1.group(2);
+				Num_Group_Variables = m1.group(4).split(",").length;
+				temp = m1.group(4).replaceAll(" ", "").split(",");
 				for(String i:temp) {
 					Order.add(i);
 				}
 			}
 			else if(line.contains(key4)||line.contains(KEY4)) {
 				Pattern p6 = Pattern.compile("(such that\\s+)(.*)");
-				m = p6.matcher(line);
-				m.find();
-				Condition_Vect = m.group(2);
+				m1 = p6.matcher(line);
+				m1.find();
+				Condition_Vect = m1.group(2);
 			}
 			else if(line.contains(key5)||line.contains(KEY5)) {
 				Pattern p7 = Pattern.compile("(having\\s+)(.*)");
-				m = p7.matcher(line);
-				m.find();
-				Having_Condition = m.group(2);
+				m1 = p7.matcher(line);
+				m1.find();
+				Having_Condition = m1.group(2);
 			}
 		}
 		//find all the grouping variable aggregate in such as
 		Pattern p8 = Pattern.compile("([^A-Za-z0-9]*)([A-Za-z0-9]+[(][A-Za-z0-9]*[.]*[A-Za-z0-9]+[)])([^A-Za-z0-9]*)");
-		m = p8.matcher(Condition_Vect);
-		while(m.find()) {
-			if(m.hitEnd()) {
-				if(!FV.contains(m.group(2)))
-					FV = FV+m.group(2)+",";
+		m1 = p8.matcher(Condition_Vect);
+		while(m1.find()) {
+			if(m1.hitEnd()) {
+				if(!Aggregate_function.contains(m1.group(2))) {
+					Aggregate_function = Aggregate_function + m1.group(2) + ",";
+				}
 			}
 			else {
-				if(!FV.contains(m.group(2)))
-					FV = FV+m.group(2)+",";
+				if(!Aggregate_function.contains(m1.group(2))) {
+					Aggregate_function = Aggregate_function + m1.group(2) + ",";
+				}
 			}
 		}
 		//find all the grouping variable aggregate in having
-		m = p8.matcher(Having_Condition);
-		while(m.find()) {
-			if(m.hitEnd()) {
-				if(!FV.contains(m.group(2)))
-					FV = FV+m.group(2)+",";
+		m1 = p8.matcher(Having_Condition);
+		while(m1.find()) {
+			if(m1.hitEnd()) {
+				if(!Aggregate_function.contains(m1.group(2))) {
+					Aggregate_function = Aggregate_function + m1.group(2) + ",";
+				}
 			}
 			else {
-				if(!FV.contains(m.group(2)))
-					FV = FV+m.group(2)+",";
+				if(!Aggregate_function.contains(m1.group(2))) {
+					Aggregate_function = Aggregate_function + m1.group(2) + ",";
+				}
 			}
 		}
 		//find all the grouping variable aggregate in select
 		Pattern p9 = Pattern.compile("([^A-Za-z0-9]*)([A-Za-z0-9]+[(][A-Za-z0-9]*[.]*[A-Za-z0-9|*]+[)])([^A-Za-z0-9]*)");
-		m = p9.matcher(Select_Att);
-		while(m.find()) {
-			if(m.hitEnd()) {
-				if(!FV.contains(m.group(2)))
-					FV = FV+m.group(2);
+		m1 = p9.matcher(Select_Att);
+		while(m1.find()) {
+			if(m1.hitEnd()) {
+				if(!Aggregate_function.contains(m1.group(2))) {
+					Aggregate_function = Aggregate_function + m1.group(2);
+				}
 			}
 			else {
-				if(!FV.contains(m.group(2)))
-					FV = FV+m.group(2)+",";
+				if(!Aggregate_function.contains(m1.group(2))) {
+					Aggregate_function = Aggregate_function + m1.group(2) + ",";
+				}
 			}
 		}
 		Condition_Vect = Condition_Vect.replaceAll("'", "\"");
@@ -142,8 +151,8 @@ public class TranslateSQL {
 			writer.write(Num_Group_Variables+"\n");
 			writer.write("// GROUPING ATTRIBUTES(V):\n");
 			writer.write(Group_Att+"\n");
-			writer.write("// F-VECT([F]):\n");
-			writer.write(FV+"\n");
+			writer.write("// List of aggregate functions([F]):\n");
+			writer.write(Aggregate_function+"\n");
 			writer.write("// SELECT CONDITION-VECT([Sigma]):\n");
 			writer.write(Condition_Vect+"\n");
 			writer.write("// HAVING CONDITION(G):\n");
@@ -159,5 +168,3 @@ public class TranslateSQL {
 		return All_Order;
 	}
 }
-}
-
