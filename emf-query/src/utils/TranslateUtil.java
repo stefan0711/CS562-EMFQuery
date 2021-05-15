@@ -9,8 +9,8 @@ import java.util.regex.*;
 public class TranslateUtil {
 	/**
 	 *
-	 * @param querry Lines of SQL sentence to be translated
-	 * @implNote it is designed to translate SQL into EMF form
+	 * @param querry An SQL collection divided by rows
+	 * This method is used to generate a file with an EMFQUERY structure
 	 */
 	public static List<List<String>> transSQLFile(List<String> querry) {
 		Matcher m1 = null;
@@ -171,7 +171,7 @@ public class TranslateUtil {
 	/**
 	 * 
 	 * @param attributes
-	 * @return a HashMap with GROUPING VARIABLES as key, and output are like avg_quant or just quant if there are no function
+	 * @return The HashMap key is the grouping variable VALUES is AVG_QUANT, or QUANT if there is no function
 	 */
 	public static HashMap<String,String> transAttrs(String[] attributes){
 		HashMap<String,String> t_attributes = new HashMap<>();

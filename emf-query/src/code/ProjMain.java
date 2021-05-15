@@ -21,30 +21,30 @@ public class ProjMain {
 
         //Select the EMFSQL file using JFilEchooser 默认是本项目
         File current = new File("");
-        //为了获取当前项目的路径 方便代码在其他平台使用
+        // To get the path of the current project so that the code can be used on other platforms
         String currentPath = current.getCanonicalPath();
         System.out.println("Current project path: ======> " + currentPath);
         JFileChooser chooser = new JFileChooser(currentPath);
         FileNameExtensionFilter filter = new FileNameExtensionFilter("txt", "txt");
         chooser.setFileFilter(filter);
-        //该方法用于显示我们选择文件时弹出的框
+        // This method displays the box that pops up when we select the file
         int returnVal = chooser.showOpenDialog(null);
-        //获得以选择文件的路径
+        // Get to select the path to the file
         String path = chooser.getSelectedFile().getPath();
-        //如果用户点击确认 触发
+        // Triggers if the user clicks OK
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             System.out.println("You chose to open this file: ======> " + path);
         }
 
         System.out.print("columnNameAndType: ======> " + columnNameAndType);
         //
-        List<String> SQLquery = FileUtil.readByLine(path);
+        List<String> SQLquery = FileUtil.readFileByLine(path);
         List<List<String>> all_order = TranslateUtil.transSQLFile(SQLquery);
         List<String> order = all_order.get(1);
         List<String> select_order = all_order.get(0);
         System.out.println(order);
 
-        List<String> EMFquery = FileUtil.readByLine("emf-query/src/output/TranslatedSQL.txt");
+        List<String> EMFquery = FileUtil.readFileByLine("emf-query/src/output/TranslatedSQL.txt");
         String selectAttribute = "";
         int numberGrouping = 0;
         String groupingVariable = "";

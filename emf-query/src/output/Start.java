@@ -6,7 +6,7 @@ import java.io.*;
 import utils.JDBCUtil;
 
 public class Start {
-	public static class groupingVariable_x{
+	public static class groupingVariable_X{
 		public List<Date> date = new ArrayList<>();
 		public List<String> prod = new ArrayList<>();
 		public List<Integer> month = new ArrayList<>();
@@ -17,7 +17,7 @@ public class Start {
 		public List<Integer> day = new ArrayList<>();
 		public List<Integer> avg_quant = new ArrayList<>();
 	}
-	public static class groupingVariable_y{
+	public static class groupingVariable_Y{
 		public List<Date> date = new ArrayList<>();
 		public List<String> prod = new ArrayList<>();
 		public List<Integer> month = new ArrayList<>();
@@ -40,16 +40,16 @@ public class Start {
 	}
 	public static void main(String[] args) {
 	groupingVariable_O O = new groupingVariable_O();
-	groupingVariable_x x = new groupingVariable_x();
-	groupingVariable_y y = new groupingVariable_y();
+	groupingVariable_X X = new groupingVariable_X();
+	groupingVariable_Y Y = new groupingVariable_Y();
 	ResultSet rs = null;
 
 	//creating mfs-structure
 	Map<String, List> mfs = new HashMap<>();
-	mfs.put("cust", new ArrayList<String>());
 	mfs.put("prod", new ArrayList<String>());
-	mfs.put("x_avg_quant", new ArrayList<Integer>());
-	mfs.put("y_avg_quant", new ArrayList<Integer>());
+	mfs.put("month", new ArrayList<Integer>());
+	mfs.put("X_avg_quant", new ArrayList<Integer>());
+	mfs.put("Y_avg_quant", new ArrayList<Integer>());
 		try {
 			System.out.println("Database: Loading successful.");
 			JDBCUtil db = new JDBCUtil();
@@ -57,24 +57,24 @@ public class Start {
 			Statement stat = conn.createStatement();
 			rs = stat.executeQuery("SELECT * FROM sales");
 			while(rs.next()){
-			//load data to attribute x
-				x.date.add((Date)rs.getObject("date"));
-				x.prod.add((String)rs.getObject("prod"));
-				x.month.add((Integer)rs.getObject("month"));
-				x.year.add((Integer)rs.getObject("year"));
-				x.state.add((String)rs.getObject("state"));
-				x.quant.add((Integer)rs.getObject("quant"));
-				x.cust.add((String)rs.getObject("cust"));
-				x.day.add((Integer)rs.getObject("day"));
-			//load data to attribute y
-				y.date.add((Date)rs.getObject("date"));
-				y.prod.add((String)rs.getObject("prod"));
-				y.month.add((Integer)rs.getObject("month"));
-				y.year.add((Integer)rs.getObject("year"));
-				y.state.add((String)rs.getObject("state"));
-				y.quant.add((Integer)rs.getObject("quant"));
-				y.cust.add((String)rs.getObject("cust"));
-				y.day.add((Integer)rs.getObject("day"));
+			//load data to attribute X
+				X.date.add((Date)rs.getObject("date"));
+				X.prod.add((String)rs.getObject("prod"));
+				X.month.add((Integer)rs.getObject("month"));
+				X.year.add((Integer)rs.getObject("year"));
+				X.state.add((String)rs.getObject("state"));
+				X.quant.add((Integer)rs.getObject("quant"));
+				X.cust.add((String)rs.getObject("cust"));
+				X.day.add((Integer)rs.getObject("day"));
+			//load data to attribute Y
+				Y.date.add((Date)rs.getObject("date"));
+				Y.prod.add((String)rs.getObject("prod"));
+				Y.month.add((Integer)rs.getObject("month"));
+				Y.year.add((Integer)rs.getObject("year"));
+				Y.state.add((String)rs.getObject("state"));
+				Y.quant.add((Integer)rs.getObject("quant"));
+				Y.cust.add((String)rs.getObject("cust"));
+				Y.day.add((Integer)rs.getObject("day"));
 			//load data to attribute O 
 				O.date.add((Date)rs.getObject("date"));
 				O.prod.add((String)rs.getObject("prod"));
@@ -85,8 +85,8 @@ public class Start {
 				O.cust.add((String)rs.getObject("cust"));
 				O.day.add((Integer)rs.getObject("day"));
 			//load data to groupingVariable 
-				mfs.get("cust").add((String)rs.getObject("cust")); 
 				mfs.get("prod").add((String)rs.getObject("prod")); 
+				mfs.get("month").add((Integer)rs.getObject("month")); 
 			}
 		}
 		catch(SQLException e) {
@@ -101,32 +101,32 @@ public class Start {
 			Integer sum = null; 
 			Integer count = null; 
 			Integer avg = null; 
-			String cust = (String)mfs.get("cust").get(i); 
 			String prod = (String)mfs.get("prod").get(i); 
-			Integer x_avg_quant = 0;
-			if(!mfs.get("x_avg_quant").isEmpty()&&i<mfs.get("x_avg_quant").size()) { 
-				x_avg_quant= (Integer)mfs.get("x_avg_quant").get(i); 
+			Integer month = (Integer)mfs.get("month").get(i); 
+			Integer X_avg_quant = 0;
+			if(!mfs.get("X_avg_quant").isEmpty()&&i<mfs.get("X_avg_quant").size()) { 
+				X_avg_quant= (Integer)mfs.get("X_avg_quant").get(i); 
 			 }
-			Integer y_avg_quant = 0;
-			if(!mfs.get("y_avg_quant").isEmpty()&&i<mfs.get("y_avg_quant").size()) { 
-				y_avg_quant= (Integer)mfs.get("y_avg_quant").get(i); 
+			Integer Y_avg_quant = 0;
+			if(!mfs.get("Y_avg_quant").isEmpty()&&i<mfs.get("Y_avg_quant").size()) { 
+				Y_avg_quant= (Integer)mfs.get("Y_avg_quant").get(i); 
 			 }
 			for(int j = 0; j < O.prod.size(); j++) {
-				Date x_date =  O.date.get(j); 
-				String x_prod =  O.prod.get(j); 
-				Integer x_month =  O.month.get(j); 
-				Integer x_year =  O.year.get(j); 
-				String x_state =  O.state.get(j); 
-				Integer x_quant =  O.quant.get(j); 
-				String x_cust =  O.cust.get(j); 
-				Integer x_day =  O.day.get(j); 
-			if(x_avg_quant!=null&&y_avg_quant!=null&&true) {
-				if(x_cust.equals(cust)&&x_prod.equals(prod)) { 
+				Date X_date =  O.date.get(j); 
+				String X_prod =  O.prod.get(j); 
+				Integer X_month =  O.month.get(j); 
+				Integer X_year =  O.year.get(j); 
+				String X_state =  O.state.get(j); 
+				Integer X_quant =  O.quant.get(j); 
+				String X_cust =  O.cust.get(j); 
+				Integer X_day =  O.day.get(j); 
+			if(X_avg_quant!=null&&Y_avg_quant!=null&&true) {
+				if(X_prod.equals(prod)&&X_month<month) { 
 					 if(sum==null) 
 						 sum=0; 
 					 if(count==null) 
 						 count=0; 
-					 sum +=x_quant; 
+					 sum +=X_quant; 
 					count++; 
  				} 
 				} 
@@ -134,7 +134,7 @@ public class Start {
 			if(count != null&&count != 0) {
 				avg = sum/count;
 			} 
-				mfs.get("x_avg_quant").add(avg); 
+				mfs.get("X_avg_quant").add(avg); 
  		}
 
 
@@ -142,32 +142,32 @@ public class Start {
 			Integer sum = null; 
 			Integer count = null; 
 			Integer avg = null; 
-			String cust = (String)mfs.get("cust").get(i); 
 			String prod = (String)mfs.get("prod").get(i); 
-			Integer x_avg_quant = 0;
-			if(!mfs.get("x_avg_quant").isEmpty()&&i<mfs.get("x_avg_quant").size()) { 
-				x_avg_quant= (Integer)mfs.get("x_avg_quant").get(i); 
+			Integer month = (Integer)mfs.get("month").get(i); 
+			Integer X_avg_quant = 0;
+			if(!mfs.get("X_avg_quant").isEmpty()&&i<mfs.get("X_avg_quant").size()) { 
+				X_avg_quant= (Integer)mfs.get("X_avg_quant").get(i); 
 			 }
-			Integer y_avg_quant = 0;
-			if(!mfs.get("y_avg_quant").isEmpty()&&i<mfs.get("y_avg_quant").size()) { 
-				y_avg_quant= (Integer)mfs.get("y_avg_quant").get(i); 
+			Integer Y_avg_quant = 0;
+			if(!mfs.get("Y_avg_quant").isEmpty()&&i<mfs.get("Y_avg_quant").size()) { 
+				Y_avg_quant= (Integer)mfs.get("Y_avg_quant").get(i); 
 			 }
 			for(int j = 0; j < O.prod.size(); j++) {
-				Date y_date =  O.date.get(j); 
-				String y_prod =  O.prod.get(j); 
-				Integer y_month =  O.month.get(j); 
-				Integer y_year =  O.year.get(j); 
-				String y_state =  O.state.get(j); 
-				Integer y_quant =  O.quant.get(j); 
-				String y_cust =  O.cust.get(j); 
-				Integer y_day =  O.day.get(j); 
-			if(x_avg_quant!=null&&y_avg_quant!=null&&true) {
-				if(!y_cust.equals(cust)&&y_prod.equals(prod)) { 
+				Date Y_date =  O.date.get(j); 
+				String Y_prod =  O.prod.get(j); 
+				Integer Y_month =  O.month.get(j); 
+				Integer Y_year =  O.year.get(j); 
+				String Y_state =  O.state.get(j); 
+				Integer Y_quant =  O.quant.get(j); 
+				String Y_cust =  O.cust.get(j); 
+				Integer Y_day =  O.day.get(j); 
+			if(X_avg_quant!=null&&Y_avg_quant!=null&&true) {
+				if(Y_prod.equals(prod)&&Y_month>month) { 
 					 if(sum==null) 
 						 sum=0; 
 					 if(count==null) 
 						 count=0; 
-					 sum +=y_quant; 
+					 sum +=Y_quant; 
 					count++; 
  				} 
 				} 
@@ -175,31 +175,31 @@ public class Start {
 			if(count != null&&count != 0) {
 				avg = sum/count;
 			} 
-				mfs.get("y_avg_quant").add(avg); 
+				mfs.get("Y_avg_quant").add(avg); 
  		}
 	//creating result-structure
 	Map<String, List> result = new HashMap<>();
-	result.put("cust", new ArrayList<String>());
 	result.put("prod", new ArrayList<String>());
-	result.put("x_avg_quant", new ArrayList<Integer>());
-	result.put("y_avg_quant", new ArrayList<Integer>());
+	result.put("month", new ArrayList<Integer>());
+	result.put("X_avg_quant", new ArrayList<Integer>());
+	result.put("Y_avg_quant", new ArrayList<Integer>());
 	boolean flag = true; 
 	for(int i = 0; i<O.prod.size();i++) { 
- 		for(int j = 0; j<result.get("cust").size();j++) { 
- 			 if(result.get("cust").get(j).equals(mfs.get("cust").get(i))&&result.get("prod").get(j).equals(mfs.get("prod").get(i))) {
+ 		for(int j = 0; j<result.get("prod").size();j++) { 
+ 			 if(result.get("prod").get(j).equals(mfs.get("prod").get(i))&&result.get("month").get(j).equals(mfs.get("month").get(i))) {
 				flag = false; 
 				break; 
 			}else { 
 				 flag = true;			}; 
 		} 
-		Integer x_avg_quant=(		Integer)mfs.get("x_avg_quant").get(i);
-		Integer y_avg_quant=(		Integer)mfs.get("y_avg_quant").get(i);
+		Integer X_avg_quant=(		Integer)mfs.get("X_avg_quant").get(i);
+		Integer Y_avg_quant=(		Integer)mfs.get("Y_avg_quant").get(i);
 		try{
 		if(flag) { 
-			result.get("cust").add(mfs.get("cust").get(i)); 
 			result.get("prod").add(mfs.get("prod").get(i)); 
-			result.get("x_avg_quant").add(mfs.get("x_avg_quant").get(i)); 
-			result.get("y_avg_quant").add(mfs.get("y_avg_quant").get(i)); 
+			result.get("month").add(mfs.get("month").get(i)); 
+			result.get("X_avg_quant").add(mfs.get("X_avg_quant").get(i)); 
+			result.get("Y_avg_quant").add(mfs.get("Y_avg_quant").get(i)); 
 		} 
 		}catch(NullPointerException e){
 			continue;
@@ -208,10 +208,10 @@ public class Start {
 	} 
 		//Print the data on the console 
 		List<String> column_name = new ArrayList<>(); 
-		column_name.add("cust"); 
 		column_name.add("prod"); 
-		column_name.add("x_avg_quant"); 
-		column_name.add("y_avg_quant"); 
+		column_name.add("month"); 
+		column_name.add("X_avg_quant"); 
+		column_name.add("Y_avg_quant"); 
 		StringBuffer stringBuffer = new StringBuffer(); 
 		StringBuffer line = new StringBuffer(); 
 		//Print the header
@@ -222,9 +222,9 @@ public class Start {
 		System.out.println(stringBuffer); 
 		System.out.println(line); 
 		//Iterate through the data and print the data as a line
-		for(int i=0;i<result.get("prod").size();i++) {
-			if(result.get("prod").get(i)!=null&&result.get("x_avg_quant").get(i)!=null&&result.get("y_avg_quant").get(i)!=null) {
-				System.out.println("----"+result.get("cust").get(i)+"----"+result.get("prod").get(i)+"----"+result.get("x_avg_quant").get(i)+"----"+result.get("y_avg_quant").get(i)+"----");
+		for(int i=0;i<result.get("month").size();i++) {
+			if(result.get("month").get(i)!=null&&result.get("X_avg_quant").get(i)!=null&&result.get("Y_avg_quant").get(i)!=null) {
+				System.out.println("----"+result.get("prod").get(i)+"----"+result.get("month").get(i)+"----"+result.get("X_avg_quant").get(i)+"----"+result.get("Y_avg_quant").get(i)+"----");
 			}
 		}
 	}

@@ -8,20 +8,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FileUtil {
-    
     // read file line by line
 	/**
 	 * 
 	 * @param fileName
 	 * @return Lines of the file, stored in List
 	 */
-    public static List<String> readByLine(String fileName) {
+    public static List<String> readFileByLine(String fileName) {
         List<String> lines = new ArrayList<String>();
         String line = null;
         LineNumberReader reader = null;
         
         try {
-            // create a reader instance
             reader = new LineNumberReader(new FileReader(fileName));
             // read line by line
             while ((line = reader.readLine()) != null) {
@@ -36,7 +34,7 @@ public class FileUtil {
             e.printStackTrace();
         }
         finally {
-            // close lineNumberReader
+            // close Stream
             try {
                 if(reader != null) {
                     reader.close();

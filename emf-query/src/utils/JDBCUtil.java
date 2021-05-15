@@ -8,7 +8,7 @@ public class JDBCUtil {
 	}
 
 	/**
-	 * @return a Connection type, use it to access database
+	 *  use it to access database
 	 */
 	public Connection connectToDatabase() {
 		Connection db;
@@ -30,7 +30,7 @@ public class JDBCUtil {
 	/**
 	 * @param db        type Connection
 	 * @param tableName type String
-	 * @return return a HashMap with column name as key and type(the type has been translated into java type not SQL type) as data
+	 * @return Put the column name and type into the Map
 	 */
 	public static HashMap<String, String> columnNameAndType(Connection db, String tableName) {
 		HashMap<String, String> Name_Type = new HashMap<>();
