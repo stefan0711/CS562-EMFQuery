@@ -1,0 +1,5 @@
+﻿select prod, month, sum(x.quant), sum(y.quant)
+from sales
+group by prod, month; x, y
+such that x.prod = prod and x.month = month, y.prod = prod
+

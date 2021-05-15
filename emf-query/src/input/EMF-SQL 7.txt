@@ -1,0 +1,4 @@
+select  prod, month, avg(X.quant),avg(Y.quant)
+from Sales
+group by prod, month; X , Y
+such that  X.prod=prod and X.month<month,Y.prod=prod and Y.month>month

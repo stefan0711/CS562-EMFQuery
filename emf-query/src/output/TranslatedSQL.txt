@@ -1,0 +1,12 @@
+// SELECT ATTRIBUTE(S):
+cust, prod, avg(x.quant), avg(y.quant)
+// NUMBER OF GROUPING VARIABLES(n):
+2
+// GROUPING ATTRIBUTES(V):
+cust, prod
+// F-VECT([F]):
+avg(x.quant),avg(y.quant)
+// SELECT CONDITION-VECT([Sigma]):
+x.cust = cust and x.prod = prod, y.cust <> cust and y.prod = prod
+// HAVING CONDITION(G):
+
