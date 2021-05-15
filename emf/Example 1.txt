@@ -1,12 +1,12 @@
 // SELECT ATTRIBUTE(S):
-prod, month, count(z.quant)
+cust, prod, avg(x.quant), avg(y.quant)
 // NUMBER OF GROUPING VARIABLES(n):
-3
+2
 // GROUPING ATTRIBUTES(V):
-prod, month
+cust, prod
 // F-VECT([F]):
-avg(x.quant),avg(y.quant),count(z.quant)
+avg(x.quant),avg(y.quant)
 // SELECT CONDITION-VECT([Sigma]):
-x.prod = prod and x.month = month - 1, y.prod = prod and y.month = month + 1, z.prod = prod and z.month = month and z.quant > avg(x.quant) and z.quant < avg(y.quant)
+x.cust = cust and x.prod = prod, y.cust <> cust and y.prod = prod
 // HAVING CONDITION(G):
 

@@ -33,7 +33,6 @@ public class TranslateSQL {
 		List<String> S_Order = new ArrayList<>();
 		List<List<String>> All_Order = new ArrayList<>();
 		Order.add("O");
-		Matcher m1 = null;
 		Matcher m2 = null;
 		for(String line:querry) {
 			if(line.contains(key1)||line.contains(KEY1)) {

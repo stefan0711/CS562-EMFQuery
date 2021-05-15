@@ -70,6 +70,7 @@ public class TranslateEmf {
 				}
 			}
 		}
+		System.out.println("------------99999"+t_attributes);
 		return t_attributes;
 	}
 	
@@ -170,7 +171,7 @@ public class TranslateEmf {
 						}
 					}
 					//if pattern match avg(quant)
-					Patten p9 = Pattern.compile("()([A-Za-z0-9]+)([(])([a-zA-Z0-9|*]+)([)])()");
+					Pattern p9 = Pattern.compile("()([A-Za-z0-9]+)([(])([a-zA-Z0-9|*]+)([)])()");
 					n = p9.matcher(temp);
 					if(n.find()) {
 						temp = "O_" + n.group(2) + "_" + n.group(4);
@@ -201,7 +202,7 @@ public class TranslateEmf {
 								temp = n.group(2) + "_" + n.group(4);
 						}
 					}
-					Patten p9 = Pattern.compile("()([A-Za-z0-9]+)([(])([a-zA-Z0-9|*]+)([)])()");
+					Pattern p9 = Pattern.compile("()([A-Za-z0-9]+)([(])([a-zA-Z0-9|*]+)([)])()");
 					n = p9.matcher(temp);
 					if(n.find()) {
 						temp = "O_" + n.group(2) + "_" + n.group(4);
@@ -302,7 +303,7 @@ public class TranslateEmf {
 								temp = n.group(2) + "_" + n.group(4);
 						}
 					}
-					Patten p10 = Pattern.compile("()([A-Za-z0-9]+)([(])([A-Za-z0-9]+)([)])()")
+					Pattern p10 = Pattern.compile("()([A-Za-z0-9]+)([(])([A-Za-z0-9]+)([)])()");
 					n = p10.matcher(temp);
 					if(n.find())
 						temp = "O_" + n.group(2) + "_" + n.group(4);

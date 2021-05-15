@@ -165,19 +165,19 @@ public class ProjMain {
 		   
 		    //creating the structure containing all vect
 		    Map<String, List> vect = new HashMap<>();
-            for(Map.Entry<String, String> entry: select_attribute.entrySet()) {
-            	if(!entry.getKey().contentEquals("O")) {
-            	vect.put(entry.getKey(), new ArrayList<String>());
-            	if(entry.getValue().contains(",")) {
-		    		String[] str = entry.getValue().split(",");
-		    		for(String value: str) {
-		    			vect.get(entry.getKey()).add(value);
-		    		}
-            	}else {
-            		vect.get(entry.getKey()).add(entry.getValue());
-            	}
-            	}
-            }
+			for (Map.Entry<String, String> entry : select_attribute.entrySet()) {
+				if (!entry.getKey().contentEquals("O")) {
+					vect.put(entry.getKey(), new ArrayList<String>());
+					if (entry.getValue().contains(",")) {
+						String[] str = entry.getValue().split(",");
+						for (String value : str) {
+							vect.get(entry.getKey()).add(value);
+						}
+					} else {
+						vect.get(entry.getKey()).add(entry.getValue());
+					}
+				}
+			}
             
             for(Map.Entry<String, String> entry: F_VECT.entrySet()) {
             	if(!vect.containsKey(entry.getKey())) {
@@ -436,58 +436,94 @@ public class ProjMain {
 		    writer.write("\t\t flag = true; \n");
 		    writer.write("\t} \n");
 
-		    writer.write("\t\t try {\n");
-		    writer.write("\t\t\tXSSFWorkbook workbook = new XSSFWorkbook(); \n");
-		    writer.write("\t\t\tXSSFSheet sheet = workbook.createSheet(\"table result\"); \n");
-		    writer.write("\n");
-		    writer.write("\t\t\tFileOutputStream out = new FileOutputStream(new File(\"result.xlsx\")); \n");
-		    writer.write("\t\t\tList<String> column_name = new ArrayList<>(); \n");
-		    writer.write("\t\t\tList<List<Object>> data = new ArrayList<>(); \n ");
-		    for(String var: select_order) {
-		    	writer.write("\t\t\tcolumn_name.add(\""+ var +"\"); \n");
-		    	writer.write("\t\t\tdata.add(result.get(\""+ var +"\")); \n");
-		    }
-		    
-		    //export to result.excel 
-		    
-		    writer.write("\t\t\tint rownum = 0;\n");
-		    writer.write("\t\t\tint cellnum = 0;\n");
-		    writer.write("\t\t\tint flag_null_value = 0;\n");
-		    writer.write("\t\t\tRow row = sheet.createRow(rownum++);\n");
-		    writer.write("\t\t\tfor(int i=0;i<column_name.size();i++) {\n");
-		    writer.write("\t\t\t\tCell cell = row.createCell(cellnum++);\n");
-		    writer.write("\t\t\t\tcell.setCellValue(column_name.get(i));\n");
-		    writer.write("\t\t\t}\n");
-		    writer.write("\t\t\tcellnum=0;\n");
-		    writer.write("\t\t\tfor(int i=0;i<data.get(0).size();i++) {\n");
-		    writer.write("\t\t\t\trow = sheet.createRow(rownum++);\n");
-		    writer.write("\t\t\t\tfor(int j=0;j<column_name.size();j++) {\n");
-		    writer.write("\t\t\t\t\tif(flag_null_value==1)\n");
-		    writer.write("\t\t\t\t\t\tcontinue;\n");
-		    writer.write("\t\t\t\t\tif(data.get(j).get(i)==null) {\n");
-		    writer.write("\t\t\t\t\t\tsheet.removeRow(row);\n");
-		    writer.write("\t\t\t\t\t\trownum--;\n");
-		    writer.write("\t\t\t\t\t\tflag_null_value=1;\n");
-		    writer.write("\t\t\t\t\t\tcontinue;\n");
-		    writer.write("\t\t\t\t\t}\n");
-		    writer.write("\t\t\t\t\tCell cell = row.createCell(cellnum++);\n");
-		    writer.write("\t\t\t\t\tif(data.get(j).get(i) instanceof String)\n");
-		    writer.write("\t\t\t\t\t\tcell.setCellValue((String)data.get(j).get(i));\n");
-		    writer.write("\t\t\t\t\telse if(data.get(j).get(i) instanceof Integer)\n");
-		    writer.write("\t\t\t\t\t\tcell.setCellValue((Integer)data.get(j).get(i));\n");
-		    writer.write("\t\t\t\t}\n");
-		    writer.write("\t\t\t\tcellnum = 0;\n");
-		    writer.write("\t\t\t\tflag_null_value = 0;\n");
-		    writer.write("\t\t\t}\n");
-		    writer.write("\t\t\tworkbook.write(out);\n");
-		    writer.write("\t\t\tout.close();\n");
-		    writer.write("\t\t\tSystem.out.println(\"result.xlsx written successfully on disk.\");\n");
-		    writer.write("\t\t} catch (FileNotFoundException e) {\n");
-		    writer.write("\t\t\te.printStackTrace();\n");
-		    writer.write("\t\t} catch (IOException e) {\n");
-		    writer.write("\t\t\te.printStackTrace();\n");
-		    writer.write("\t\t}\n");
-		    
+			writer.write("\t\tList<String> column_name = new ArrayList<>(); \n");
+			List<String> conAttr = new ArrayList();
+			for(String var: select_order) {
+				conAttr.add("result.get(\""+var+"\")");
+				writer.write("\t\t\tcolumn_name.add(\""+ var +"\"); \n");
+			}
+			writer.write("\t\tStringBuffer stringBuffer = new StringBuffer(); \n");
+			writer.write("\t\t\tfor(int i=0;i<column_name.size();i++) {\n");
+			writer.write("\t\t\t\tstringBuffer.append(\"----\").append(column_name.get(i));\n");
+			writer.write("\t\t\t}\n");
+			writer.write("\t\tSystem.out.println(stringBuffer); \n");
+
+			String con = "";
+			String sys = "";
+			for (int i = 0; i <= conAttr.size()-1; i++) {
+				if (i==0){
+					sys=sys+"\"----\"+"+conAttr.get(i)+".get(i)";
+				}
+				else if (i!=conAttr.size()-1&&i!=0){
+					con=con+conAttr.get(i)+".get(i)!=null&&";
+					sys=sys+"+\"----\"+"+conAttr.get(i)+".get(i)";
+				}else {
+					con=con+conAttr.get(i)+".get(i)!=null";
+					sys=sys+"+\"----\"+"+conAttr.get(i)+".get(i)+\"----\"";
+				}
+			}
+			writer.write("\t\tfor(int i=0;i<"+conAttr.get(1)+".size();i++) {\n");
+			writer.write("\t\t\tif("+con+") {\n");
+			writer.write("\t\t\t\tSystem.out.println("+sys+");\n");
+
+
+
+
+
+//		    writer.write("\t\t try {\n");
+//		    writer.write("\t\t\tXSSFWorkbook workbook = new XSSFWorkbook(); \n");
+//		    writer.write("\t\t\tXSSFSheet sheet = workbook.createSheet(\"table result\"); \n");
+//		    writer.write("\n");
+//		    writer.write("\t\t\tFileOutputStream out = new FileOutputStream(new File(\"result.xlsx\")); \n");
+//		    writer.write("\t\t\tList<String> column_name = new ArrayList<>(); \n");
+//		    writer.write("\t\t\tList<List<Object>> data = new ArrayList<>(); \n ");
+//		    for(String var: select_order) {
+//		    	writer.write("\t\t\tcolumn_name.add(\""+ var +"\"); \n");
+//		    	writer.write("\t\t\tdata.add(result.get(\""+ var +"\")); \n");
+//		    }
+//
+//		    //export to result.excel
+//
+//		    writer.write("\t\t\tint rownum = 0;\n");
+//		    writer.write("\t\t\tint cellnum = 0;\n");
+//		    writer.write("\t\t\tint flag_null_value = 0;\n");
+//		    writer.write("\t\t\tRow row = sheet.createRow(rownum++);\n");
+//		    writer.write("\t\t\tfor(int i=0;i<column_name.size();i++) {\n");
+//		    writer.write("\t\t\t\tCell cell = row.createCell(cellnum++);\n");
+//		    writer.write("\t\t\t\tcell.setCellValue(column_name.get(i));\n");
+//		    writer.write("\t\t\t}\n");
+//		    writer.write("\t\t\tcellnum=0;\n");
+//		    writer.write("\t\t\tfor(int i=0;i<data.get(0).size();i++) {\n");
+//		    writer.write("\t\t\t\trow = sheet.createRow(rownum++);\n");
+//		    writer.write("\t\t\t\tfor(int j=0;j<column_name.size();j++) {\n");
+//		    writer.write("\t\t\t\t\tif(flag_null_value==1)\n");
+//		    writer.write("\t\t\t\t\t\tcontinue;\n");
+//		    writer.write("\t\t\t\t\tif(data.get(j).get(i)==null) {\n");
+//		    writer.write("\t\t\t\t\t\tsheet.removeRow(row);\n");
+//		    writer.write("\t\t\t\t\t\trownum--;\n");
+//		    writer.write("\t\t\t\t\t\tflag_null_value=1;\n");
+//		    writer.write("\t\t\t\t\t\tcontinue;\n");
+//		    writer.write("\t\t\t\t\t}\n");
+//		    writer.write("\t\t\t\t\tCell cell = row.createCell(cellnum++);\n");
+//		    writer.write("\t\t\t\t\tif(data.get(j).get(i) instanceof String)\n");
+//		    writer.write("\t\t\t\t\t\tcell.setCellValue((String)data.get(j).get(i));\n");
+//		    writer.write("\t\t\t\t\telse if(data.get(j).get(i) instanceof Integer)\n");
+//		    writer.write("\t\t\t\t\t\tcell.setCellValue((Integer)data.get(j).get(i));\n");
+//		    writer.write("\t\t\t\t}\n");
+//		    writer.write("\t\t\t\tcellnum = 0;\n");
+//		    writer.write("\t\t\t\tflag_null_value = 0;\n");
+//		    writer.write("\t\t\t}\n");
+//		    writer.write("\t\t\tworkbook.write(out);\n");
+//		    writer.write("\t\t\tout.close();\n");
+//		    writer.write("\t\t\tSystem.out.println(\"result.xlsx written successfully on disk.\");\n");
+//		    writer.write("\t\t} catch (FileNotFoundException e) {\n");
+//		    writer.write("\t\t\te.printStackTrace();\n");
+//		    writer.write("\t\t} catch (IOException e) {\n");
+//		    writer.write("\t\t\te.printStackTrace();\n");
+//		    writer.write("\t\t}\n");
+			writer.write("\t\t\t}"+"\n");
+
+			writer.write("\t\t}"+"\n");
 
             writer.write("\t}"+"\n");
             //end of class
