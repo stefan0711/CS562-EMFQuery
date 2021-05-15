@@ -39,7 +39,7 @@ public class ProjMain {
 		System.out.print("columnNameAndType: ======> "+columnNameAndType);
 		//
 		List<String> SQLquery = FileUtil.readByLine(path);
-		List<List<String>> all_order = TranslateSQL.translate(SQLquery);
+		List<List<String>> all_order = TranslateUtil.transSQLFile(SQLquery);
 		List<String> order = all_order.get(1);
 		List<String> select_order = all_order.get(0);
 		System.out.println(order);
@@ -73,10 +73,10 @@ public class ProjMain {
 			}
 		}
 		
-		HashMap<String,String> select_attribute = TranslateEmf.translateAttributes(SA.split(","));
-		HashMap<String,String> F_VECT = TranslateEmf.translateFVECT(FV.split(","));
-		HashMap<String,String> condition_vect = TranslateEmf.translateCondition(CV.split(","));
-		List<String> having_condition = TranslateEmf.translateHavingCondition(HC.split(","));
+		HashMap<String,String> select_attribute = TranslateUtil.transAttrs(SA.split(","));
+		HashMap<String,String> F_VECT = TranslateUtil.transFVECT(FV.split(","));
+		HashMap<String,String> condition_vect = TranslateUtil.transCon(CV.split(","));
+		List<String> having_condition = TranslateUtil.transHavingCon(HC.split(","));
 		String[] grouping_variable = GV.replaceAll(" ", "").split(",");
 		
 		System.out.println("SELECT ATTRIBUTE(S): ======> "+select_attribute);
@@ -467,60 +467,6 @@ public class ProjMain {
 			writer.write("\t\t\t\tSystem.out.println("+sys+");\n");
 
 
-
-
-
-//		    writer.write("\t\t try {\n");
-//		    writer.write("\t\t\tXSSFWorkbook workbook = new XSSFWorkbook(); \n");
-//		    writer.write("\t\t\tXSSFSheet sheet = workbook.createSheet(\"table result\"); \n");
-//		    writer.write("\n");
-//		    writer.write("\t\t\tFileOutputStream out = new FileOutputStream(new File(\"result.xlsx\")); \n");
-//		    writer.write("\t\t\tList<String> column_name = new ArrayList<>(); \n");
-//		    writer.write("\t\t\tList<List<Object>> data = new ArrayList<>(); \n ");
-//		    for(String var: select_order) {
-//		    	writer.write("\t\t\tcolumn_name.add(\""+ var +"\"); \n");
-//		    	writer.write("\t\t\tdata.add(result.get(\""+ var +"\")); \n");
-//		    }
-//
-//		    //export to result.excel
-//
-//		    writer.write("\t\t\tint rownum = 0;\n");
-//		    writer.write("\t\t\tint cellnum = 0;\n");
-//		    writer.write("\t\t\tint flag_null_value = 0;\n");
-//		    writer.write("\t\t\tRow row = sheet.createRow(rownum++);\n");
-//		    writer.write("\t\t\tfor(int i=0;i<column_name.size();i++) {\n");
-//		    writer.write("\t\t\t\tCell cell = row.createCell(cellnum++);\n");
-//		    writer.write("\t\t\t\tcell.setCellValue(column_name.get(i));\n");
-//		    writer.write("\t\t\t}\n");
-//		    writer.write("\t\t\tcellnum=0;\n");
-//		    writer.write("\t\t\tfor(int i=0;i<data.get(0).size();i++) {\n");
-//		    writer.write("\t\t\t\trow = sheet.createRow(rownum++);\n");
-//		    writer.write("\t\t\t\tfor(int j=0;j<column_name.size();j++) {\n");
-//		    writer.write("\t\t\t\t\tif(flag_null_value==1)\n");
-//		    writer.write("\t\t\t\t\t\tcontinue;\n");
-//		    writer.write("\t\t\t\t\tif(data.get(j).get(i)==null) {\n");
-//		    writer.write("\t\t\t\t\t\tsheet.removeRow(row);\n");
-//		    writer.write("\t\t\t\t\t\trownum--;\n");
-//		    writer.write("\t\t\t\t\t\tflag_null_value=1;\n");
-//		    writer.write("\t\t\t\t\t\tcontinue;\n");
-//		    writer.write("\t\t\t\t\t}\n");
-//		    writer.write("\t\t\t\t\tCell cell = row.createCell(cellnum++);\n");
-//		    writer.write("\t\t\t\t\tif(data.get(j).get(i) instanceof String)\n");
-//		    writer.write("\t\t\t\t\t\tcell.setCellValue((String)data.get(j).get(i));\n");
-//		    writer.write("\t\t\t\t\telse if(data.get(j).get(i) instanceof Integer)\n");
-//		    writer.write("\t\t\t\t\t\tcell.setCellValue((Integer)data.get(j).get(i));\n");
-//		    writer.write("\t\t\t\t}\n");
-//		    writer.write("\t\t\t\tcellnum = 0;\n");
-//		    writer.write("\t\t\t\tflag_null_value = 0;\n");
-//		    writer.write("\t\t\t}\n");
-//		    writer.write("\t\t\tworkbook.write(out);\n");
-//		    writer.write("\t\t\tout.close();\n");
-//		    writer.write("\t\t\tSystem.out.println(\"result.xlsx written successfully on disk.\");\n");
-//		    writer.write("\t\t} catch (FileNotFoundException e) {\n");
-//		    writer.write("\t\t\te.printStackTrace();\n");
-//		    writer.write("\t\t} catch (IOException e) {\n");
-//		    writer.write("\t\t\te.printStackTrace();\n");
-//		    writer.write("\t\t}\n");
 			writer.write("\t\t\t}"+"\n");
 
 			writer.write("\t\t}"+"\n");
